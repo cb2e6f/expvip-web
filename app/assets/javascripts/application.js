@@ -358,12 +358,12 @@ function toggleStudies() {
 function logoMargin() {
   setTimeout(function () {
     var totalWidth = 0;
-    $(".footer img").each(function () {
-      totalWidth = totalWidth + $(this).width();
-    });
-    $(".logo").css("margin-left", ((window.innerWidth - totalWidth) / 10) - 10);
-    $(".logo").css("margin-right", ((window.innerWidth - totalWidth) / 10) - 10);
-  }, 200);
+    $(".footer img").each(function(){
+      totalWidth =  totalWidth + $(this).width();    
+    }); 
+    $(".logo").css("margin-left", ((window.innerWidth - totalWidth)/8)-10 );
+    $(".logo").css("margin-right", ((window.innerWidth - totalWidth)/8)-10 );
+  }, 200);  
 }
 
 function setDocumentHeight() {
