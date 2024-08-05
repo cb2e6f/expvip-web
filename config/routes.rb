@@ -1,4 +1,3 @@
-require 'sequenceserver'
 require "#{Rails.root}/lib/links.rb"  
 Rails.application.routes.draw do
   #map.root :controller => 'wellcome', :action => :default
@@ -41,18 +40,4 @@ Rails.application.routes.draw do
       get 'set_gene_set_session'     
     end
   end
-  
-  begin
-    config_ss = {}
-    if Rails.application.config.respond_to?(:sequenceserver_config)
-      config_file = Rails.application.config.sequenceserver_config 
-      config_ss[:config_file]  =  config_file if Dir.exist? config_file
-    end
-    SequenceServer.init config_ss
-    mount SequenceServer, :at => "sequenceserver"
-  rescue Exception => e
-    Logger.new(STDOUT).info "Unable to start sequenceserver: " + e.to_s
-  end
-  
-  
 end

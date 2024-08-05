@@ -42,12 +42,6 @@ gem 'mongo'
 
 gem 'mime-types'
 
-# gem 'sinatra', '~> 2.0'
-#gem 'sequenceserver', '~> 1.0.11'
-gem 'sequenceserver', :git => 'https://github.com/homonecloco/sequenceserver.git', :branch => 'update-sinatra'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
 group :development do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

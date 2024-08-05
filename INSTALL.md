@@ -206,7 +206,7 @@ Install our javascript dependencies:
 ## kallisto
 )
 [comment]: # (
-Only needed for import so should really be handled by someting else.
+Only needed for import so should really be handled by something else.
 )
 [comment]: # (
     mkdir dl
@@ -326,3 +326,167 @@ Load our data:
     rails load_data:values_mongo[first,IWGSC1,count,/home/expvip/IWGSC1/final_output_counts.txt]
 
 For our VM installs data was however dumped from the old VMs and restored to the new ones.
+
+## Move to standalone & up to date sequenceserver
+
+There is a need to move to the latest version of sequenceserver, to facilitate 
+this we need to move to running sequenceserver as a separate user and 
+redirecting request to it via nginx. What fallows is how to move to this setup 
+if running a system setup with the instructions above, at some point this will 
+need to be taken in to account when setting up from scratch but that is not a 
+current need.
+
+### Install & configure standalone sequenceserver
+
+Install the system ruby for sequenceserver to use.
+
+    sudo dnf install -y ruby-devel
+
+Add a user to run sequencserver
+
+    sudo luseradd seqservusr
+
+
+Allow execution in home directories by other users
+
+    sudo chmod g+x,o+x /home/expvip
+    sudo chmod g+x,o+x /home/seqservusr
+
+Add users to relevant groups
+
+    sudo usermod -aG expvip nginx
+    sudo usermod -aG nginx expvip
+
+Give sequenceserver user access to data
+
+    sudo chown -R seqservusr:seqservusr /var/data
+
+
+#### as the sequenceserver user
+
+As the sequenceserver user install and configure sequenceserver
+    
+    gem install sequenceserver
+
+
+Add the path to ~/.bashrc
+
+    export PATH=$PATH:/home/seqservusr/.sequenceserver/ncbi-blast-2.16.0+/bin
+
+Download ncbi-blast
+
+    mkdir ~/.sequenceserver
+    cd ~/.sequenceserver
+    wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.16.0+-x64-linux.tar.gz
+    tar -xf ncbi-blast-2.16.0+-x64-linux.tar.gz
+
+Create config ~/sequenceserver.conf
+
+    ---
+    :host: 0.0.0.0
+    :port: 4567
+    :databases_widget: classic
+    :options:
+      :blastn:
+        :default:
+          :description:
+          :attributes:
+          - "-task blastn"
+          - "-evalue 1e-5"
+      :blastp:
+        :default:
+          :description:
+          :attributes:
+          - "-evalue 1e-5"
+      :blastx:
+        :default:
+          :description:
+          :attributes:
+          - "-evalue 1e-5"
+      :tblastx:
+        :default:
+          :description:
+          :attributes:
+          - "-evalue 1e-5"
+      :tblastn:
+        :default:
+          :description:
+          :attributes:
+          - "-evalue 1e-5"
+    :num_threads: 1
+    :num_jobs: 1
+    :job_lifetime: 43200
+    :cloud_share_url: https://share.sequenceserver.com/api/v1/shared-job
+    :large_result_warning_threshold: 262144000
+    :optimistic: false
+    :bin: "/home/seqservusr/.sequenceserver/ncbi-blast-2.15.0+/bin"
+    :database_dir: "/var/data"
+
+
+#### as a regular user
+
+Configure nginx
+
+Change user to nginx
+
+    <   user expvip;
+    ---
+    >   user nginx;
+    
+Add location and redirect to server section of /etc/nginx/nginx.conf
+
+    location /sequenceserver/ {
+        proxy_pass http://127.0.0.1:4567/;
+        proxy_intercept_errors on;
+        proxy_connect_timeout 8;
+        proxy_read_timeout 180;
+    }
+
+    rewrite ^(/sequenceserver/genes)(.*)$  /genes/$2 permanent;
+
+
+Restart nginx
+
+    sudo systemctl restart nginx.service
+
+Create systemd unit file /etc/systemd/system/sequenceserver.service
+
+    [Unit]
+    Description=SequenceServer server daemon
+    Documentation="file://sequenceserver --help" "http://sequenceserver.com/doc"
+    After=network.target
+
+    [Service]
+    Type=simple
+    User=seqservusr
+    Environment="BLAST_USAGE_REPORT=false"
+    Environment="PATH=/home/seqservusr/.local/bin:/home/seqservusr/bin:/root/.local/bin:/root/bin:/usr/local/sbin:/sbin:/bin:/usr/sbin:/usr/bin:/home/seqservusr/.sequenceserver/ncbi-blast-2.15.0+/bin"
+    ExecStart=/home/seqservusr/bin/sequenceserver --devel --config /home/seqservusr/.sequenceserver.conf --bin /home/seqservusr/.sequenceserver/ncbi-blast-2.15.0+/bin/
+    KillMode=process
+    Restart=on-failure
+    RestartSec=42s
+    RestartPreventExitStatus=255
+
+    [Install]
+    WantedBy=multi-user.target
+
+
+Start and enable sequenceserver
+
+   sudo systemctl start sequenceserver.service
+   sudo systemctl status sequenceserver.service
+   sudo systemctl enable sequenceserver.service
+
+
+Pull and build the relevant branch of expvip-web
+
+   bundle install
+   npm install
+   npm run bundle
+
+
+
+
+
+
+
