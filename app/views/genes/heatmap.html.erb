@@ -40,7 +40,7 @@
   contentHeight = windowHeight - (navHeight + footerHeight) - 90;
 
   var container_div="bar_expression_viewer";
-  var data_url = "<%=raw "#{request.base_url}/expression_values/genes.json?#{@args}"%>" ;
+  var data_url = "<%=raw "https:\/\/#{request.host}/expression_values/genes.json?#{@args}"%>" ;
   console.log(data_url);
   var parentWidth = $("#bar_expression_viewer").parent().width();
   var eb;

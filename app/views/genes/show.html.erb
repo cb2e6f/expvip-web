@@ -44,7 +44,7 @@
   contentHeight = windowHeight - (navHeight + footerHeight) - 90;
 
   var container_div="bar_expression_viewer";
-  var data_url = "<%= "#{request.base_url}/expression_values/#{@gene.search_by}.json?#{@args}" %>" ;
+  var data_url = "<%= "https:\/\/#{request.host}/expression_values/#{@gene.search_by}.json?#{@args}" %>" ;
   var gene = "<%= @gene.name %>";
   var eb;
   console.log(data_url);  
