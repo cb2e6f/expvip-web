@@ -1,5 +1,6 @@
 class GenesController < ApplicationController
 
+  require 'webrick'
   require 'digest'  
 
   before_action :set_gene, only: [:show, :edit, :update, :destroy]
