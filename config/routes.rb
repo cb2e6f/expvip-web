@@ -1,5 +1,6 @@
 require "#{Rails.root}/lib/links.rb"  
 Rails.application.routes.draw do
+  get "health", to: "health#show"
   #map.root :controller => 'wellcome', :action => :default
   #get 'wellcome/default'
   root 'wellcome#default'

@@ -1,18 +1,10 @@
-#! /bin/bash
-
-
-#  database: $DB_NAME
-#  username: root
-#  password: root
-#  host: mysql
-#  port: 3306
-
+#! /bin/bash -e
 
 cat <<EOT > /app/config/database.yml
 default: &default
   adapter: mysql2
   encoding: utf8
-  url: mysql2://root:root@mysql:3306/$DB_NAME
+  url: mysql2://root:root@mysql:3306/mydb
 
 development:
   <<: *default
@@ -43,3 +35,6 @@ production:
 test:
   <<: *default
 EOT
+
+rails db:setup
+rails db:migrate

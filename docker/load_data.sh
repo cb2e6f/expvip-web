@@ -1,8 +1,6 @@
 #!/bin/bash -e
 sudo docker compose exec -T expvip bash <<'EOF'
 set -e
-rails db:setup
-rails db:migrate
 rails load_data:default_factor_order[/data/test_minimal_factor_order.csv]
 rails load_data:factor[/data/test_minimal_factors.tsv]
 rails load_data:metadata[/data/test_minimal_metadata.tsv]

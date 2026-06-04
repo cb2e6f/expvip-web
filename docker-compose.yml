@@ -3,6 +3,7 @@ services:
     image: mysql:8
     container_name: mysql
     environment:
+      MYSQL_DATABASE: mydb
       MYSQL_ROOT_PASSWORD: root
       MYSQL_ROOT_HOST: '%'
     healthcheck:
@@ -24,10 +25,6 @@ services:
       - ./docker/data:/data
       - ./app:/app/app
       - ./lib:/app/lib
-    environment:
-      DB_NAME: mydb
-      DB_USER: root
-      DB_PASSWORD: root
     depends_on:
       mysql:
         condition: service_healthy
@@ -77,6 +74,9 @@ services:
     networks:
       - app-net
     restart: unless-stopped
+#    depends_on:
+#      expvip:
+#        condition: service_healthy
 
 networks:
   app-net:
