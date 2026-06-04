@@ -74,9 +74,9 @@ services:
     networks:
       - app-net
     restart: unless-stopped
-#    depends_on:
-#      expvip:
-#        condition: service_healthy
+    depends_on:
+      expvip:
+        condition: service_healthy
 
 networks:
   app-net:
