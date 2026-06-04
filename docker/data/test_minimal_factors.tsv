@@ -1,0 +1,17 @@
+factor	order	name	short
+Tissue	1	Leaf	Lea
+Tissue	2	Root	Roo
+Variety	1	TestVar1	TV1
+Variety	2	TestVar2	TV2
+Age	1	seedling	see
+Age	2	adult plant	adu
+Stress-disease	1	none	non
+Stress-disease	2	treated	tre
+High level tissue	1	Leaf	Lea
+High level tissue	2	Root	Roo
+High level variety	1	TestVar1	TV1
+High level variety	2	TestVar2	TV2
+High level age	1	seedling	see
+High level age	2	adult plant	adu
+High level stress-disease	1	none	non
+High level stress-disease	2	treated	tre

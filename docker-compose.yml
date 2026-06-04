@@ -1,0 +1,83 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app-net
+
+  expvip:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: expvip
+    volumes:
+      - ./docker/blast:/db
+      - ./docker/data:/data
+      - ./app:/app/app
+      - ./lib:/app/lib
+    environment:
+      DB_NAME: mydb
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      sequenceserver:
+        condition: service_healthy
+
+    networks:
+      - app-net
+
+  sequenceserver:
+    container_name: sequenceserver
+    build:
+      context: ./docker/sequenceserver
+    volumes:
+      - ./docker/blast:/db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4567/searchdata.json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - app-net
+
+  mongo:
+    container_name: mongo
+    image: mongo:6.0.28
+    restart: always
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping').ok", "--quiet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-net
+  
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - app-net
+    restart: unless-stopped
+
+networks:
+  app-net:
+    driver: bridge

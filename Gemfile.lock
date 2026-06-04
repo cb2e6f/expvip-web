@@ -59,6 +59,7 @@ GEM
     bootstrap-sass (3.4.1)
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
+    brakeman (5.4.1)
     bson (4.3.0)
     builder (3.2.3)
     byebug (10.0.2)
@@ -209,6 +210,7 @@ DEPENDENCIES
   bio (~> 1.5)
   bio-kallisto (~> 0.1.0)
   bootstrap-sass (~> 3.4)
+  brakeman
   byebug
   jbuilder (~> 2.0)
   jquery-rails

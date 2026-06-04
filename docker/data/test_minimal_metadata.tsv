@@ -1,0 +1,3 @@
+run_accession	secondary_study_accession	study_title	scientific_name	Manuscript	Tissue	Variety	Age	Stress-disease	High level tissue	High level variety	High level age	High level stress-disease	Total reads	Mapped reads
+EXP001	STUDY001	Test Study One	Pisum sativum	Test Paper 1	Leaf	TestVar1	seedling	none	Leaf	TestVar1	seedling	none	1000000	950000
+EXP002	STUDY001	Test Study One	Pisum sativum	Test Paper 1	Root	TestVar2	adult plant	treated	Root	TestVar2	adult plant	treated	1200000	1100000

@@ -1,0 +1,3 @@
+[submodule "docker/sequenceserver"]
+	path = docker/sequenceserver
+	url = https://github.com/wurmlab/sequenceserver
